@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gianni | Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/gg-sans');
+
+        :root {
+            --bg-deep: #1e1f22;
+            --bg-sidebar: #2b2d31;
+            --bg-main: #313338;
+            --bg-modifier-hover: rgba(78, 80, 88, 0.3);
+            --accent: #5865f2;
+            --accent-hover: #4752c4;
+            --text-primary: #f2f3f5;
+            --text-muted: #949ba4;
+            --online: #23a55a;
+        }
+
+        /* --- RESET & SCROLLBAR --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'gg sans', sans-serif; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1a1b1e; border-radius: 10px; border: 2px solid var(--bg-main); }
+
+        body { background: var(--bg-deep); color: var(--text-primary); height: 100vh; display: flex; overflow: hidden; transition: filter 0.3s; }
+
+        /* --- DOCK --- */
+        .dock { width: 72px; background: #1e1f22; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; z-index: 100; }
+        .srv-icon {
+            width: 48px; height: 48px; background: var(--bg-main); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s ease; font-size: 20px; color: var(--text-muted); position: relative;
+        }
+        .srv-icon:hover, .srv-icon.active { border-radius: 16px; background: var(--accent); color: white; }
+        .srv-pill { 
+            position: absolute; left: -4px; width: 8px; height: 8px; background: white; border-radius: 0 4px 4px 0; 
+            transition: 0.2s; transform: scaleY(0); 
+        }
+        .srv-icon:hover .srv-pill { transform: scaleY(2.5); }
+        .srv-icon.active .srv-pill { transform: scaleY(5); height: 8px; }
+
+        /* --- SIDEBAR --- */
+        .sidebar { width: 240px; background: var(--bg-sidebar); display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-header { 
+            height: 48px; padding: 0 16px; display: flex; align-items: center; font-weight: 700; 
+            box-shadow: 0 1px 0 rgba(0,0,0,0.2); font-size: 15px; justify-content: space-between;
+        }
+        .nav-list { flex: 1; padding: 12px 8px; overflow-y: auto; }
+        .nav-category { color: var(--text-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 18px 8px 4px; display: flex; align-items: center; justify-content: space-between; }
+        .nav-item {
+            padding: 6px 8px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 8px; 
+            color: var(--text-muted); font-size: 15px; transition: 0.1s; margin-bottom: 2px;
+        }
+        .nav-item:hover { background: var(--bg-modifier-hover); color: #dbdee1; }
+        .nav-item.active { background: #3f4147; color: white; }
+
+        /* --- USER CARD --- */
+        .user-card { background: #232428; padding: 8px; display: flex; align-items: center; gap: 8px; }
+        .u-avatar-wrapper { position: relative; width: 32px; height: 32px; }
+        .u-avatar { width: 100%; height: 100%; border-radius: 50%; background: var(--accent); display: grid; place-items: center; font-weight: bold; font-size: 10px; }
+        .u-status { width: 12px; height: 12px; background: var(--online); border: 3px solid #232428; border-radius: 50%; position: absolute; bottom: -2px; right: -2px; }
+        .u-info { flex: 1; line-height: 1.2; overflow: hidden; }
+        .u-name { font-size: 13px; font-weight: 700; white-space: nowrap; }
+        .u-tag { font-size: 11px; color: var(--text-muted); }
+        .u-icons { display: flex; gap: 4px; }
+        .u-icon-btn { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 4px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
+        .u-icon-btn:hover { background: var(--bg-modifier-hover); color: var(--text-primary); }
+
+        /* --- MAIN --- */
+        .main { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
+        .top-nav { 
+            height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.2); z-index: 10;
+        }
+        .top-left { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+        .top-right { display: flex; align-items: center; gap: 16px; color: var(--text-muted); }
+        .search-bar { background: var(--bg-deep); border-radius: 4px; padding: 2px 8px; font-size: 12px; display: flex; align-items: center; gap: 8px; width: 144px; }
+
+        .content-area { flex: 1; display: flex; overflow: hidden; }
+        .scroll-container { flex: 1; overflow-y: auto; padding: 24px; scroll-behavior: smooth; }
+        
+        .card { 
+            background: #2b2d31; border-radius: 8px; padding: 16px; margin-bottom: 16px; 
+            border-left: 4px solid var(--accent); transition: 0.2s;
+        }
+        .card:hover { transform: translateX(4px); background: #35373c; }
+        .card h2 { font-size: 16px; margin-bottom: 8px; color: white; display: flex; align-items: center; gap: 8px; }
+        .card p { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+
+        .btn-link { 
+            display: inline-flex; align-items: center; background: var(--accent); color: white; 
+            padding: 6px 16px; border-radius: 4px; text-decoration: none; font-size: 13px; 
+            margin-top: 12px; transition: 0.2s; font-weight: 500;
+        }
+        .btn-link:hover { background: var(--accent-hover); }
+
+        /* --- RIGHT PANEL --- */
+        .right-panel { width: 280px; background: var(--bg-sidebar); padding: 16px; border-left: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
+        .presence-header { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; }
+
+        @media (max-width: 900px) { .right-panel { display: none; } }
+
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); filter: blur(5px); } 
+            to { opacity: 1; transform: translateY(0); filter: blur(0); } 
+        }
+        body.corrupted { animation: shake 0.1s infinite; filter: sepia(1) hue-rotate(300deg) contrast(1.2); }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(0,0); } }
+    </style>
+</head>
+<body>
+
+    <div class="dock">
+        <div class="srv-icon active" onclick="switchSrv('me', this)" title="Profil">
+            <div class="srv-pill"></div>
+            <i class="fa-solid fa-user-ninja"></i>
+        </div>
+        <div class="srv-icon" onclick="switchSrv('code', this)" title="Projets">
+            <div class="srv-pill"></div>
+            <i class="fa-solid fa-terminal"></i>
+        </div>
+        <div class="srv-icon" onclick="switchSrv('hub', this)" title="Communautés">
+            <div class="srv-pill"></div>
+            <i class="fa-brands fa-discord"></i>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span id="header-text">GIANNI</span>
+            <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: var(--text-muted); cursor: pointer;"></i>
+        </div>
+        <div class="nav-list" id="nav-list"></div>
+        
+        <div class="user-card">
+            <div class="u-avatar-wrapper">
+                <div class="u-avatar">YOU</div>
+                <div class="u-status"></div>
+            </div>
+            <div class="u-info">
+                <div class="u-name">User <i class="fa-solid fa-circle-check" style="color: var(--accent); font-size: 10px;"></i></div>
+                <div class="u-tag">@you</div>
+            </div>
+            <div class="u-icons">
+                <div class="u-icon-btn"><i class="fa-solid fa-microphone"></i></div>
+                <div class="u-icon-btn"><i class="fa-solid fa-headphones"></i></div>
+                <div class="u-icon-btn" onclick="document.body.classList.toggle('corrupted')"><i class="fa-solid fa-gear"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="top-nav">
+            <div class="top-left">
+                <i class="fa-solid fa-hashtag" style="color:var(--text-muted)"></i>
+                <span id="top-title">accueil</span>
+            </div>
+            <div class="top-right">
+                <i class="fa-solid fa-bell-slash" style="cursor: pointer;"></i>
+                <i class="fa-solid fa-thumbtack" style="cursor: pointer;"></i>
+                <i class="fa-solid fa-users" style="cursor: pointer;"></i>
+                <div class="search-bar">Rechercher <i class="fa-solid fa-magnifying-glass" style="font-size: 10px; margin-left: auto;"></i></div>
+                <i class="fa-solid fa-inbox" style="cursor: pointer;"></i>
+                <i class="fa-solid fa-circle-question" style="cursor: pointer;"></i>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="scroll-container" id="main-view"></div>
+
+            <div class="right-panel">
+                <div class="presence-header">Compétences</div>
+                <div class="nav-item"><i class="fa-brands fa-html5" style="color:#e34c26"></i> HTML & CSS</div>
+                <div class="nav-item"><i class="fa-brands fa-python" style="color:#3776ab"></i> Python</div>
+                <div class="nav-item"><i class="fa-brands fa-js" style="color:#f7df1e"></i> JavaScript</div>
+                <div class="nav-item"><i class="fa-solid fa-ellipsis" style="color:var(--text-muted)"></i> Autres</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DB = {
+            me: {
+                name: "PROFIL",
+                nav: [
+                    { category: "Information", items: [
+                        { id: 'bio', label: 'biographie', icon: 'fa-address-card', content: `
+                            <div class="card">
+                                <h2><i class="fa-solid fa-sparkles"></i> Bio</h2>
+                                <p>Pourquoi vouloir savoir des choses sur moi ?</p>
+                            </div>
+                            <div class="card">
+                                <h2><i class="fa-solid fa-chart-line"></i> Infos & Statistiques</h2>
+                                <p>• Owner et actionnaire de plusieurs groupes.<br>• 1 Projet officiel (pour le moment).</p>
+                            </div>
+                        `},
+                        { id: 'legal', label: 'mentions-légales', icon: 'fa-scale-balanced', content: `
+                            <div class="card">
+                                <h2>Copyright © 2026</h2>
+                                <p>Ce portfolio est une création originale de Gianni. Tous droits réservés. Référencement légal : France.</p>
+                            </div>
+                        `}
+                    ]}
+                ]
+            },
+            code: {
+                name: "PROJETS",
+                nav: [
+                    { category: "Applications Web", items: [
+                        { id: 'game', label: 'bowling-space', icon: 'fa-rocket', content: `
+                            <div class="card">
+                                <h2>Bowling Spatial</h2>
+                                <p>Mini-jeu expérimental en creation pour un coucours de Game Jam (En cours de développement)</p>
+                            </div>
+                        `}
+                    ]}
+                ]
+            },
+            hub: {
+                name: "COMMUNAUTÉS",
+                nav: [
+                    { category: "Serveurs", items: [
+                        { id: 'conc', label: 'concordia', icon: 'fa-shield-heart', content: `
+                            <div class="card">
+                                <h2>Concordia</h2>
+                                <p>Trouvez vos futurs partenaires de jeu ou de développement.</p>
+                                <a href="https://discord.gg/FQRn3E8SzN" class="btn-link" target="_blank">Rejoindre l'attente</a>
+                            </div>
+                        `},
+                        { id: 'devcom', label: 'the-developer-community', icon: 'fa-code', content: `
+                            <div class="card">
+                                <h2>The Developer Community</h2>
+                                <p>Communauté privée de développeurs pour de l'entraide technique.</p>
+                                <a href="https://discord.gg/TrzsT4Z4tr" class="btn-link" style="background: var(--online);" target="_blank">Rejoindre (Bientôt sous postulation)</a>
+                            </div>
+                        `},
+                        { id: 'serv', label: 'servitium', icon: 'fa-shield-halved', content: `
+                            <div class="card">
+                                <h2>Servitium</h2>
+                                <p>Besoin de quelque chose ? Ici, tout se fait (enfin presque).</p>
+                                <a href="https://discord.gg/acz9hU9ufU" class="btn-link" target="_blank">Rejoindre l'attente</a>
+                            </div>
+                            <div class="card" style="border-left-color: var(--text-muted);">
+                                <p><i class="fa-solid fa-info-circle"></i> Site web créé par le staff de Servitium.</p>
+                            </div>
+                        `}
+                    ]}
+                ]
+            }
+        };
+
+        function switchSrv(srvKey, element) {
+            document.querySelectorAll('.srv-icon').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            const srv = DB[srvKey];
+            document.getElementById('header-text').innerText = srv.name;
+            const navContainer = document.getElementById('nav-list');
+            navContainer.innerHTML = '';
+
+            srv.nav.forEach(cat => {
+                const catTitle = document.createElement('div');
+                catTitle.className = 'nav-category';
+                catTitle.innerHTML = `<span>${cat.category}</span> <i class="fa-solid fa-plus" style="font-size:10px; cursor:pointer"></i>`;
+                navContainer.appendChild(catTitle);
+
+                cat.items.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'nav-item';
+                    if (index === 0) div.classList.add('active');
+                    div.innerHTML = `<i class="fa-solid ${item.icon}"></i> ${item.label}`;
+                    div.onclick = () => {
+                        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                        div.classList.add('active');
+                        updateView(item);
+                    };
+                    navContainer.appendChild(div);
+                    if (index === 0) updateView(item);
+                });
+            });
+        }
+
+        function updateView(item) {
+            document.getElementById('top-title').innerText = item.label;
+            const container = document.getElementById('main-view');
+            container.innerHTML = `<div style="animation: fadeIn 0.4s ease;">${item.content}</div>`;
+        }
+
+        // Initialisation de la première vue
+        switchSrv('me', document.querySelector('.srv-icon'));
+    </script>
+</body>
+</html>
