@@ -3,363 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gianni | Portfolio Mobile-Ready</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Gianni | Hub Diagnostic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.cdnfonts.com/css/gg-sans');
-
         :root {
             --bg-deep: #1e1f22;
             --bg-sidebar: #2b2d31;
             --bg-main: #313338;
-            --bg-modifier-hover: rgba(78, 80, 88, 0.3);
             --accent: #5865f2;
-            --accent-hover: #4752c4;
             --text-primary: #f2f3f5;
             --text-muted: #949ba4;
-            --online: #23a55a;
-            --sidebar-width: 240px;
-            --dock-width: 72px;
         }
 
-        /* --- RESET & SCROLLBAR --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'gg sans', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background: var(--bg-deep); color: var(--text-primary); height: 100vh; display: flex; overflow: hidden; }
+
+        /* Sidebar & Dock */
+        .app-container { display: flex; width: 100%; height: 100%; }
         
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #1a1b1e; border-radius: 10px; border: 2px solid var(--bg-main); }
-
-        body { background: var(--bg-deep); color: var(--text-primary); height: 100vh; display: flex; overflow: hidden; transition: filter 0.3s; }
-
-        /* --- NAVIGATION MOBILE (HIDDEN BY DEFAULT) --- */
-        .mobile-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 150;
-        }
-
-        /* --- DOCK --- */
-        .dock { 
-            width: var(--dock-width); 
-            background: #1e1f22; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 12px 0; 
-            gap: 8px; 
-            z-index: 200; 
-            flex-shrink: 0;
-        }
-        .srv-icon {
-            width: 48px; height: 48px; background: var(--bg-main); border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s ease; font-size: 20px; color: var(--text-muted); position: relative;
-        }
-        .srv-icon:hover, .srv-icon.active { border-radius: 16px; background: var(--accent); color: white; }
-        .srv-pill { 
-            position: absolute; left: -4px; width: 8px; height: 8px; background: white; border-radius: 0 4px 4px 0; 
-            transition: 0.2s; transform: scaleY(0); 
-        }
-        .srv-icon.active .srv-pill { transform: scaleY(5); height: 8px; }
-
-        /* --- SIDEBAR --- */
-        .sidebar { 
-            width: var(--sidebar-width); 
-            background: var(--bg-sidebar); 
-            display: flex; 
-            flex-direction: column; 
-            flex-shrink: 0;
-            z-index: 200;
-        }
-        .sidebar-header { 
-            height: 48px; padding: 0 16px; display: flex; align-items: center; font-weight: 700; 
-            box-shadow: 0 1px 0 rgba(0,0,0,0.2); font-size: 15px; justify-content: space-between;
-        }
-        .nav-list { flex: 1; padding: 12px 8px; overflow-y: auto; }
-        .nav-category { color: var(--text-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 18px 8px 4px; display: flex; align-items: center; justify-content: space-between; }
-        .nav-item {
-            padding: 8px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 8px; 
-            color: var(--text-muted); font-size: 15px; transition: 0.1s; margin-bottom: 2px;
-        }
-        .nav-item:hover, .nav-item.active { background: var(--bg-modifier-hover); color: white; }
-
-        /* --- USER CARD --- */
-        .user-card { background: #232428; padding: 8px; display: flex; align-items: center; gap: 8px; }
-        .u-avatar-wrapper { position: relative; width: 32px; height: 32px; flex-shrink: 0; }
-        .u-avatar { width: 100%; height: 100%; border-radius: 50%; background: var(--accent); display: grid; place-items: center; font-weight: bold; font-size: 10px; }
-        .u-status { width: 12px; height: 12px; background: var(--online); border: 3px solid #232428; border-radius: 50%; position: absolute; bottom: -2px; right: -2px; }
-        .u-info { flex: 1; overflow: hidden; }
-        .u-name { font-size: 13px; font-weight: 700; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-        .u-icons { display: flex; }
-        .u-icon-btn { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 4px; cursor: pointer; color: var(--text-muted); }
-
-        /* --- MAIN --- */
-        .main { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; position: relative; }
-        .top-nav { 
-            height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 1px 0 rgba(0,0,0,0.2); z-index: 10; flex-shrink: 0;
-        }
-        .top-left { display: flex; align-items: center; gap: 8px; font-weight: 700; }
-        .menu-toggle { display: none; cursor: pointer; font-size: 18px; color: var(--text-muted); margin-right: 8px; }
-
-        .content-area { flex: 1; display: flex; overflow: hidden; }
-        .scroll-container { flex: 1; overflow-y: auto; padding: 24px; }
+        .dock { width: 72px; background: #1e1f22; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 10px; }
+        .sidebar { width: 240px; background: var(--bg-sidebar); display: flex; flex-direction: column; }
         
-        .card { 
-            background: #2b2d31; border-radius: 8px; padding: 16px; margin-bottom: 16px; 
-            border-left: 4px solid var(--accent);
+        .srv-icon { 
+            width: 48px; height: 48px; background: var(--bg-main); border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+            color: var(--text-muted); font-size: 20px;
         }
-        .card h2 { font-size: 16px; margin-bottom: 8px; color: white; display: flex; align-items: center; gap: 8px; }
-        .card p { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+        .srv-icon.active, .srv-icon:hover { border-radius: 15px; background: var(--accent); color: white; }
 
-        .btn-link { 
-            display: inline-flex; align-items: center; background: var(--accent); color: white; 
-            padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 13px; 
-            margin-top: 12px; font-weight: 500;
+        .nav-item { 
+            padding: 10px; margin: 2px 8px; border-radius: 4px; cursor: pointer; color: var(--text-muted); 
+            display: flex; align-items: center; gap: 10px;
         }
+        .nav-item.active { background: #3f4147; color: white; }
 
-        /* --- RIGHT PANEL --- */
-        .right-panel { width: 280px; background: var(--bg-sidebar); padding: 16px; border-left: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
-        .presence-header { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; }
+        /* Main Content */
+        .main { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); }
+        .header { height: 48px; border-bottom: 1px solid rgba(0,0,0,0.2); display: flex; align-items: center; padding: 0 15px; font-weight: bold; }
+        .content { flex: 1; padding: 20px; overflow-y: auto; }
 
-        /* --- RESPONSIVE LOGIC --- */
-        @media (max-width: 1024px) {
-            .right-panel { display: none; }
-        }
+        .card { background: #2b2d31; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent); margin-bottom: 15px; }
 
+        /* Responsive simple */
         @media (max-width: 768px) {
-            .menu-toggle { display: block; }
-            
-            .dock, .sidebar {
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                transform: translateX(-100%);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            
-            .dock { left: 0; }
-            .sidebar { left: var(--dock-width); }
-            
-            body.menu-open .dock, body.menu-open .sidebar {
-                transform: translateX(0);
-            }
-            
-            body.menu-open .mobile-overlay {
-                display: block;
-            }
-
-            .top-right .search-bar, .top-right i:not(.fa-circle-question) {
-                display: none;
-            }
-            
-            .scroll-container { padding: 16px; }
+            .sidebar { display: none; } /* On simplifie pour le test */
+            .dock { width: 60px; }
         }
-
-        /* Easter Egg */
-        body.corrupted { animation: shake 0.1s infinite; filter: sepia(1) hue-rotate(300deg) contrast(1.2); }
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(0,0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body id="body">
+<body>
 
-    <div class="mobile-overlay" onclick="toggleMenu()"></div>
-
-    <div class="dock">
-        <div class="srv-icon active" onclick="switchSrv('me', this); closeMenuMobile()" title="Profil">
-            <div class="srv-pill"></div>
-            <i class="fa-solid fa-user-ninja"></i>
-        </div>
-        <div class="srv-icon" onclick="switchSrv('code', this); closeMenuMobile()" title="Projets">
-            <div class="srv-pill"></div>
-            <i class="fa-solid fa-terminal"></i>
-        </div>
-        <div class="srv-icon" onclick="switchSrv('hub', this); closeMenuMobile()" title="Communautés">
-            <div class="srv-pill"></div>
-            <i class="fa-brands fa-discord"></i>
-        </div>
-    </div>
-
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <span id="header-text">GIANNI</span>
-            <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: var(--text-muted);"></i>
-        </div>
-        <div class="nav-list" id="nav-list"></div>
-        
-        <div class="user-card">
-            <div class="u-avatar-wrapper">
-                <div class="u-avatar">YOU</div>
-                <div class="u-status"></div>
-            </div>
-            <div class="u-info">
-                <div class="u-name">Gianni <i class="fa-solid fa-circle-check" style="color: var(--accent); font-size: 10px;"></i></div>
-                <div class="u-tag">@gianni_dev</div>
-            </div>
-            <div class="u-icons">
-                <div class="u-icon-btn" onclick="document.body.classList.toggle('corrupted')"><i class="fa-solid fa-gear"></i></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="main">
-        <div class="top-nav">
-            <div class="top-left">
-                <i class="fa-solid fa-bars menu-toggle" onclick="toggleMenu()"></i>
-                <i class="fa-solid fa-hashtag" style="color:var(--text-muted)"></i>
-                <span id="top-title">accueil</span>
-            </div>
-            <div class="top-right" style="display: flex; align-items: center; gap: 12px; color: var(--text-muted);">
-                <i class="fa-solid fa-bell-slash"></i>
-                <div class="search-bar" style="background: var(--bg-deep); border-radius: 4px; padding: 2px 8px; font-size: 12px; display: flex; align-items: center; gap: 8px;">Rechercher <i class="fa-solid fa-magnifying-glass" style="font-size: 10px;"></i></div>
-                <i class="fa-solid fa-circle-question"></i>
-            </div>
+    <div class="app-container">
+        <div class="dock">
+            <div class="srv-icon active" onclick="loadContent('me')"><i class="fa-solid fa-user"></i></div>
+            <div class="srv-icon" onclick="loadContent('hub')"><i class="fa-solid fa-server"></i></div>
         </div>
 
-        <div class="content-area">
-            <div class="scroll-container" id="main-view"></div>
+        <div class="sidebar">
+            <div class="header">GIANNI</div>
+            <div id="nav-list" style="padding-top: 10px;">
+                </div>
+        </div>
 
-            <div class="right-panel">
-                <div class="presence-header">Compétences</div>
-                <div class="nav-item"><i class="fa-brands fa-html5" style="color:#e34c26"></i> HTML & CSS</div>
-                <div class="nav-item"><i class="fa-brands fa-python" style="color:#3776ab"></i> Python</div>
-                <div class="nav-item"><i class="fa-brands fa-js" style="color:#f7df1e"></i> JavaScript</div>
+        <div class="main">
+            <div class="header" id="top-title"># accueil</div>
+            <div class="content" id="main-view">
+                <div class="card">
+                    <h2>Chargement du système...</h2>
+                    <p>Si tu vois ce message, c'est que le HTML et le CSS fonctionnent.</p>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const DB = {
+        const DATA = {
             me: {
-                name: "PROFIL",
-                nav: [
-                    { category: "Information", items: [
-                        { id: 'bio', label: 'biographie', icon: 'fa-address-card', content: `
-                            <div class="card">
-                                <h2><i class="fa-solid fa-sparkles"></i> Bio</h2>
-                                <p>Pourquoi vouloir savoir des choses sur moi ?</p>
-                            </div>
-                            <div class="card">
-                                <h2><i class="fa-solid fa-chart-line"></i> Infos & Statistiques</h2>
-                                <p>• Owner et actionnaire de plusieurs groupes.<br>• 1 Projet officiel (pour le moment).</p>
-                            </div>
-                        `},
-                        { id: 'legal', label: 'mentions-légales', icon: 'fa-scale-balanced', content: `
-                            <div class="card">
-                                <h2>Copyright © 2026</h2>
-                                <p>Ce portfolio est une création originale de Gianni. Tous droits réservés.</p>
-                            </div>
-                        `}
-                    ]}
-                ]
-            },
-            code: {
-                name: "PROJETS",
-                nav: [
-                    { category: "Applications Web", items: [
-                        { id: 'game', label: 'bowling-space', icon: 'fa-rocket', content: `
-                            <div class="card">
-                                <h2>Bowling Spatial</h2>
-                                <p>Mini-jeu expérimental utilisant Three.js. (En cours)</p>
-                            </div>
-                        `}
-                    ]}
+                title: "PROFIL",
+                items: [
+                    { label: "ma-bio", content: "<h2>Gianni</h2><p>Développeur passionné.</p>" },
+                    { label: "infos", content: "<h2>Statistiques</h2><p>Système opérationnel.</p>" }
                 ]
             },
             hub: {
-                name: "COMMUNAUTÉS",
-                nav: [
-                    { category: "Serveurs", items: [
-                        { id: 'conc', label: 'concordia', icon: 'fa-shield-heart', content: `
-                            <div class="card">
-                                <h2>Concordia</h2>
-                                <p>Trouvez vos futurs partenaires de jeu.</p>
-                                <a href="https://discord.gg/FQRn3E8SzN" class="btn-link" target="_blank">Rejoindre</a>
-                            </div>
-                        `},
-                        { id: 'devcom', label: 'the-developer-community', icon: 'fa-code', content: `
-                            <div class="card">
-                                <h2>Developer Community</h2>
-                                <p>Entraide technique privée.</p>
-                                <a href="https://discord.gg/TrzsT4Z4tr" class="btn-link" target="_blank">Rejoindre</a>
-                            </div>
-                        `},
-                        { id: 'serv', label: 'servitium', icon: 'fa-shield-halved', content: `
-                            <div class="card">
-                                <h2>Servitium</h2>
-                                <p>Besoin de quelque chose ? Ici, tout se fait.</p>
-                                <a href="https://discord.gg/acz9hU9ufU" class="btn-link" target="_blank">Rejoindre</a>
-                            </div>
-                        `}
-                    ]}
+                title: "SERVEURS",
+                items: [
+                    { label: "concordia", content: "<h2>Concordia</h2><p>Lien: <a href='#' style='color:white'>Clique ici</a></p>" }
                 ]
             }
         };
 
-        // --- NAVIGATION LOGIQUE ---
-        function switchSrv(srvKey, element) {
-            document.querySelectorAll('.srv-icon').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-
-            const srv = DB[srvKey];
-            document.getElementById('header-text').innerText = srv.name;
-            const navContainer = document.getElementById('nav-list');
-            navContainer.innerHTML = '';
-
-            srv.nav.forEach(cat => {
-                const catTitle = document.createElement('div');
-                catTitle.className = 'nav-category';
-                catTitle.innerHTML = `<span>${cat.category}</span>`;
-                navContainer.appendChild(catTitle);
-
-                cat.items.forEach((item, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'nav-item';
-                    if (index === 0) div.classList.add('active');
-                    div.innerHTML = `<i class="fa-solid ${item.icon}"></i> ${item.label}`;
-                    div.onclick = () => {
-                        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                        div.classList.add('active');
-                        updateView(item);
-                        closeMenuMobile();
-                    };
-                    navContainer.appendChild(div);
-                    if (index === 0) updateView(item);
-                });
+        function loadContent(key) {
+            const srv = DATA[key];
+            document.getElementById('header-text-temp')?.remove(); // Cleanup
+            document.getElementById('top-title').innerText = `# ${srv.title}`;
+            
+            const nav = document.getElementById('nav-list');
+            nav.innerHTML = '';
+            
+            srv.items.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = `nav-item ${idx === 0 ? 'active' : ''}`;
+                div.innerHTML = `<i class="fa-solid fa-hashtag"></i> ${item.label}`;
+                div.onclick = (e) => {
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    div.classList.add('active');
+                    document.getElementById('main-view').innerHTML = `<div class="card">${item.content}</div>`;
+                    e.stopPropagation();
+                };
+                nav.appendChild(div);
+                if(idx === 0) document.getElementById('main-view').innerHTML = `<div class="card">${item.content}</div>`;
             });
+
+            // Update icons style
+            document.querySelectorAll('.srv-icon').forEach(icon => icon.classList.remove('active'));
+            event?.currentTarget?.classList.add('active');
         }
 
-        function updateView(item) {
-            document.getElementById('top-title').innerText = item.label;
-            const container = document.getElementById('main-view');
-            container.innerHTML = `<div style="animation: fadeIn 0.4s ease;">${item.content}</div>`;
-        }
-
-        // --- MOBILE LOGIQUE ---
-        function toggleMenu() {
-            document.getElementById('body').classList.toggle('menu-open');
-        }
-
-        function closeMenuMobile() {
-            if(window.innerWidth <= 768) {
-                document.getElementById('body').classList.remove('menu-open');
-            }
-        }
-
-        // Konami Code
-        let k = 0;
-        const secret = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-        document.addEventListener('keydown', (e) => {
-            if(e.key === secret[k]) {
-                k++; if(k === secret.length) { document.body.classList.toggle('corrupted'); k = 0; }
-            } else k = 0;
-        });
-
-        window.onresize = () => { if(window.innerWidth > 768) document.getElementById('body').classList.remove('menu-open'); };
-
-        switchSrv('me', document.querySelector('.srv-icon'));
+        // Diagnostic au démarrage
+        window.onload = () => {
+            console.log("Système prêt.");
+            loadContent('me');
+        };
     </script>
 </body>
 </html>
